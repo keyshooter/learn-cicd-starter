@@ -19,7 +19,7 @@ func TestGetAPIKey(t *testing.T) {
 		wantsRes string
 	}{
 		"Has API Key":   {header: apiKeyHeader, wantsErr: false, wantsRes: "123456"},
-		"No API Key":    {header: http.Header{}, wantsErr: false, wantsRes: ""},
+		"No API Key":    {header: http.Header{}, wantsErr: true, wantsRes: ""},
 		"Wrong API Key": {header: bearerKeyHeader, wantsErr: true, wantsRes: ""},
 	}
 
