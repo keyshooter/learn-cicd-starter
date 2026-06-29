@@ -1,4 +1,4 @@
-![Status Badge]{https://github.com/keyshooter/learn-cicd-starter/actions/workflows/ci/badge.svg}
+![Status Badge](https://github.com/keyshooter/learn-cicd-starter/actions/workflows/ci/badge.svg)
 
 # learn-cicd-starter (Notely)
 
