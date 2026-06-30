@@ -7,6 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
+	"time"
+	"unicode"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -19,6 +23,20 @@ import (
 
 type apiConfig struct {
 	DB *database.Queries
+}
+
+func cleanString(str string) string {
+	ansiRegex := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	cleanStr := ansiRegex.ReplaceAllString(str, "")
+
+	cleanStr = strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) {
+			return -1 // We remove the character
+		}
+		return r
+	}, cleanStr)
+
+	return cleanStr
 }
 
 //go:embed static/*
@@ -34,6 +52,8 @@ func main() {
 	if port == "" {
 		log.Fatal("PORT environment variable is not set")
 	}
+
+	port = cleanString(port)
 
 	apiCfg := apiConfig{}
 
@@ -89,8 +109,9 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		Addr:              ":" + port,
+		Handler:           router,
+		ReadHeaderTimeout: time.Minute,
 	}
 
 	log.Printf("Serving on port: %s\n", port)
